@@ -5,7 +5,7 @@ var Schema = mongoose.Schema;
 var crypto = require('crypto');
 
 var UserSchema = new Schema({
-  name: String,
+  pseudo: String,
   email: { type: String, lowercase: true },
   role: {
     type: String,
@@ -58,7 +58,8 @@ UserSchema
 UserSchema
   .path('email')
   .validate(function(email) {
-    return email.length;
+     var emailRegex = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+   return emailRegex.test(email); // Assuming email has a text attribute
   }, 'Email cannot be blank');
 
 // Validate empty password
