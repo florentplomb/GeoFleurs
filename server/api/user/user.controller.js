@@ -4,6 +4,7 @@ var User = require('./user.model');
 var passport = require('passport');
 var config = require('../../config/environment');
 var jwt = require('jsonwebtoken');
+var crypto = require('crypto');
 
 var validationError = function(res, err) {
   return res.json(422, err);
@@ -14,36 +15,85 @@ var validationError = function(res, err) {
  * restriction: 'admin'
  */
 exports.index = function(req, res) {
-  User.find({}, '-salt -hashedPassword', function (err, users) {
-    if(err) return res.send(500, err);
+  User.find({}, '-salt -hashedPassword', function(err, users) {
+    if (err) return res.send(500, err);
     res.json(200, users);
   });
 };
 
 /**
+ * login user
+ */
+exports.login = function(req, res) {
+
+  if (!req.body.email) return res.send(400);
+  if (!req.body.password) return res.send(400);
+
+  User.findOne({
+    'email': req.body.email
+  }, "", function(err, user) {
+
+    if (err || !user) return res.send(500, err);
+
+    var salt = new Buffer(user.salt, 'base64');
+
+   var hashedCli = crypto.pbkdf2Sync(req.body.password, salt, 10000, 64).toString('base64');
+   console.log(hashedCli);
+   console.log(user.hashedPassword);
+
+      if (hashedCli == user.hashedPassword) {
+
+        return res.json(user);
+
+      } else {
+
+        return res.status(422).json({
+          message: 'Wrong Password'
+        }).end()
+
+      };
+
+
+
+
+  });
+
+}
+
+/**
  * Creates a new user
  */
-exports.create = function (req, res, next) {
+exports.create = function(req, res, next) {
+  console.log(req.body);
+
+  if (!req.body.email) return res.send(400);
+  if (!req.body.pseudo) return res.send(400);
+  if (!req.body.password) return res.send(400);
+
   var newUser = new User(req.body);
   newUser.provider = 'local';
   newUser.role = 'user';
   newUser.save(function(err, user) {
     if (err) return validationError(res, err);
-    var token = jwt.sign({_id: user._id }, config.secrets.session, { expiresInMinutes: 60*5 });
+    var token = jwt.sign({
+      _id: user._id
+    }, config.secrets.session, {
+      expiresInMinutes: 60 * 5
+    });
     var userSaved = {};
     userSaved = user;
     userSaved.token = token;
-    res.json(userSaved);
+    res.json(userSaved.profile);
   });
 };
 
 /**
  * Get a single user
  */
-exports.show = function (req, res, next) {
+exports.show = function(req, res, next) {
   var userId = req.params.id;
 
-  User.findById(userId, function (err, user) {
+  User.findById(userId, function(err, user) {
     if (err) return next(err);
     if (!user) return res.send(401);
     res.json(user.profile);
@@ -56,7 +106,7 @@ exports.show = function (req, res, next) {
  */
 exports.destroy = function(req, res) {
   User.findByIdAndRemove(req.params.id, function(err, user) {
-    if(err) return res.send(500, err);
+    if (err) return res.send(500, err);
     return res.send(204);
   });
 };
@@ -69,8 +119,8 @@ exports.changePassword = function(req, res, next) {
   var oldPass = String(req.body.oldPassword);
   var newPass = String(req.body.newPassword);
 
-  User.findById(userId, function (err, user) {
-    if(user.authenticate(oldPass)) {
+  User.findById(userId, function(err, user) {
+    if (user.authenticate(oldPass)) {
       user.password = newPass;
       user.save(function(err) {
         if (err) return validationError(res, err);
