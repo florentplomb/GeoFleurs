@@ -31,9 +31,13 @@ exports.login = function(req, res) {
 
   User.findOne({
     'email': req.body.email
-  }, "", function(err, user) {
+  },  function(err, user) {
+    console.log(user);
 
-    if (err || !user) return res.send(500, err);
+    if (err) return res.send(500, err);
+    if (!user) return res.status(422).json({
+          message: 'invalid user'
+        }).end();
 
     var salt = new Buffer(user.salt, 'base64');
 
@@ -43,7 +47,7 @@ exports.login = function(req, res) {
 
       if (hashedCli == user.hashedPassword) {
 
-        return res.json(user);
+        return res.json(user.profile);
 
       } else {
 
@@ -52,9 +56,6 @@ exports.login = function(req, res) {
         }).end()
 
       };
-
-
-
 
   });
 
