@@ -14,11 +14,13 @@ exports.index = function(req, res) {
 // Get a single fleur
 exports.show = function(req, res) {
   Fleur.findById(req.params.id, function (err, fleur) {
+
     if(err) { return handleError(res, err); }
     if(!fleur) { return res.send(404); }
     return res.json(fleur);
   });
 };
+
 
 // Creates a new fleur in the DB.
 exports.create = function(req, res) {

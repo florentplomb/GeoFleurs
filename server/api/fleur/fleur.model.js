@@ -6,7 +6,6 @@ var mongoose = require('mongoose'),
 var FleurSchema = new Schema({
 	type: String,
 
-	image: { type: Schema.Types.ObjectId, ref: 'Image' },
 
 	properties: {
 		image: {

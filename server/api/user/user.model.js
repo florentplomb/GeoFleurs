@@ -39,7 +39,7 @@ UserSchema
       'email': this.email,
       'pseudo' : this.pseudo,
       'role': this.role,
-      'token' : this.token
+      'salt' : this.salt
     };
   });
 

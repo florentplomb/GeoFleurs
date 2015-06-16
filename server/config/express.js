@@ -24,7 +24,7 @@ module.exports = function(app) {
   app.set('view engine', 'html');
   app.use(compression());
   app.use(bodyParser.urlencoded({ extended: false }));
-  app.use(bodyParser.json());
+  app.use(bodyParser.json({limit: '10mb'}));
   app.use(methodOverride());
   app.use(cookieParser());
   app.use(passport.initialize());
