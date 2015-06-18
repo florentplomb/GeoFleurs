@@ -1,11 +1,15 @@
 'use strict';
 
 var mongoose = require('mongoose'),
-	Schema = mongoose.Schema;
+	Schema = mongoose.Schema,
+	CommentSchema = mongoose.model('Comment').schema;
 
 var FleurSchema = new Schema({
-	type: String,
 
+	type: {
+		type: String,
+		default: "Feature"
+	},
 
 	properties: {
 		image: {
@@ -14,17 +18,26 @@ var FleurSchema = new Schema({
 		},
 		espece: {
 			type: Schema.Types.ObjectId,
-			ref: 'Espece'
+			ref: 'EspName'
 		},
-		communes: {
+		commune: {
 			type: Schema.Types.ObjectId,
 			ref: 'Commune'
 		},
-
-		complete: Boolean, // information
-		active: Boolean // soft delete
+		commentaires: [CommentSchema],
+		complete: {
+			type: Boolean,
+			default: true
+		}, // information
+		active: {
+			type: Boolean,
+			default: true
+		}, // soft delete
 	},
+
 	geometry: Schema.Types.Mixed,
+
+
 
 });
 
