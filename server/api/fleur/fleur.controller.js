@@ -53,8 +53,9 @@ exports.create = function(req, res) {
   newFleur.properties.image = req.body.flower.properties.image;
   newFleur.properties.commune = req.body.flower.properties.commune;
 
-  if (!req.body.flower.properties.espece) {
+  if (req.body.flower.properties.espece === null) {
 
+    console.log("nulll");
     newFleur.properties.complete = false;
 
     newFleur.save(function(err, fleurSaved) {
