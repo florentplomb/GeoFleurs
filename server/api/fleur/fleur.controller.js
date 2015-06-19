@@ -41,23 +41,21 @@ exports.show = function(req, res) {
 // Creates a new fleur in the DB.
 exports.create = function(req, res) {
 
-  if (!req.body.fleur) {
+  if (!req.body.flower) {
     return res.send(400);
   }
 
-  console.log(req.body.fleur)
+  console.log(req.body.flower)
 
   var newFleur = new Fleur();
 
-  newFleur.geometry = req.body.fleur.geometry;
-  newFleur.properties.image = req.body.fleur.properties.image;
-  newFleur.properties.commune = req.body.fleur.properties.commune;
+  newFleur.geometry = req.body.flower.geometry;
+  newFleur.properties.image = req.body.flower.properties.image;
+  newFleur.properties.commune = req.body.flower.properties.commune;
 
-  if (!req.body.fleur.properties.espece) {
+  if (!req.body.flower.properties.espece) {
 
     newFleur.properties.complete = false;
-
-
 
     newFleur.save(function(err, fleurSaved) {
       return res.status(200).json({
@@ -67,7 +65,7 @@ exports.create = function(req, res) {
 
   } else {
     espName.findOne({
-      ISFS: req.body.fleur.properties.espece
+      ISFS: req.body.flower.properties.espece
     }, function(err, esp) {
       if (err) {
         return res.status(400).json({
