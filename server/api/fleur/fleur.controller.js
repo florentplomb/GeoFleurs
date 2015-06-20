@@ -25,6 +25,10 @@ exports.index = function(req, res) {
 exports.show = function(req, res) {
   Fleur.findById(req.params.id)
   .populate('properties.espece properties.commune proprietes.commentaires')
+   .populate({
+      path: 'properties.commune',
+      select: 'properties.NAME -_id',
+    })
   .exec(function(err, fleur) {
 
     if (err) {

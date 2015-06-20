@@ -1,7 +1,11 @@
 'use strict';
 
 var _ = require('lodash');
+var giSearch = require('google-image-search');
+var client = require ('google-images');
+var fs = require('fs');
 var EspName = require('./espName.model');
+
 
 // Get list of espNames
 exports.index = function(req, res) {
@@ -10,6 +14,19 @@ exports.index = function(req, res) {
     return res.json(200, espNames);
   });
 };
+
+
+// Get a single espName
+exports.gsearch = function(req, res) {
+
+  client.search('Michael Jackson'),function(err, images) {
+    image.writeTo('test.jpeg');
+  }
+
+
+return res.json("ok");
+};
+
 
 // Get a single espName
 exports.show = function(req, res) {
