@@ -12,6 +12,10 @@ var FleurSchema = new Schema({
 	},
 
 	properties: {
+		user: {
+			type: Schema.Types.ObjectId,
+			ref: 'User'
+		},
 		image: {
 			type: Schema.Types.ObjectId,
 			ref: 'Image'
@@ -23,6 +27,14 @@ var FleurSchema = new Schema({
 		commune: {
 			type: Schema.Types.ObjectId,
 			ref: 'Commune'
+		},
+		createdOn: {
+			type: Date,
+			default: Date.now
+		},
+		updatedOn: {
+			type: Date,
+			default: Date.now
 		},
 		commentaires: [CommentSchema],
 		complete: {

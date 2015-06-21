@@ -3,11 +3,12 @@
 var _ = require('lodash');
 var Fleur = require('./fleur.model');
 var espName = require('../espName/espName.model');
+var User = require('../user/user.model');
 
 // Get list of fleurs
 exports.index = function(req, res) {
   Fleur.find()
-    .populate('properties.espece properties.commune proprietes.commentaires')
+    .populate('properties.espece properties.user properties.commune proprietes.commentaires')
     .populate({
       path: 'properties.commune',
       select: 'properties.NAME -_id',
@@ -24,21 +25,21 @@ exports.index = function(req, res) {
 // Get a single fleur
 exports.show = function(req, res) {
   Fleur.findById(req.params.id)
-  .populate('properties.espece properties.commune proprietes.commentaires')
-   .populate({
+    .populate('properties.espece properties.commune properties.user proprietes.commentaires')
+    .populate({
       path: 'properties.commune',
       select: 'properties.NAME -_id',
     })
-  .exec(function(err, fleur) {
+    .exec(function(err, fleur) {
 
-    if (err) {
-      return handleError(res, err);
-    }
-    if (!fleur) {
-      return res.send(404);
-    }
-    return res.json(fleur);
-  });
+      if (err) {
+        return handleError(res, err);
+      }
+      if (!fleur) {
+        return res.send(404);
+      }
+      return res.json(fleur);
+    });
 };
 
 
@@ -56,6 +57,13 @@ exports.create = function(req, res) {
   newFleur.geometry = req.body.flower.geometry;
   newFleur.properties.image = req.body.flower.properties.image;
   newFleur.properties.commune = req.body.flower.properties.commune;
+  newFleur.properties.user = req.user.id;
+
+
+  console.log("USERS :" + req.user.id);
+
+
+
 
   if (req.body.flower.properties.espece === null) {
 

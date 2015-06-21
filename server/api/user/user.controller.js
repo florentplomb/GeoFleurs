@@ -46,8 +46,11 @@ exports.login = function(req, res) {
    console.log(user.hashedPassword);
 
       if (hashedCli == user.hashedPassword) {
+        var token = jwt.sign({
+      _id: user._id
+    }, config.secrets.session);
 
-        return res.json(user.profile);
+        return res.json(token);
 
       } else {
 
@@ -78,15 +81,25 @@ exports.create = function(req, res, next) {
     if (err) return validationError(res, err);
     var token = jwt.sign({
       _id: user._id
-    }, config.secrets.session, {
-      expiresInMinutes: 60 * 5
-    });
+    }, config.secrets.session);  // {expiresInSeconds : 5} ça marche pas!!!!
     var userSaved = {};
     userSaved = user;
-    userSaved.token = token;
-    res.json(userSaved.profile);
+
+    res.json(token);
   });
 };
+
+
+// exports.create = function (req, res, next) {
+//   var newUser = new User(req.body);
+//   newUser.provider = 'local';
+//   newUser.role = 'user';
+//   newUser.save(function(err, user) {
+//     if (err) return validationError(res, err);
+//     var token = jwt.sign({_id: user._id }, config.secrets.session, { expiresInMinutes: 60*5 });
+//     res.json({ token: token });
+//   });
+// };
 
 /**
  * Get a single user

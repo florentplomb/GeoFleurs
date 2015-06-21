@@ -1,8 +1,8 @@
 'use strict';
 
 var _ = require('lodash');
-var giSearch = require('google-image-search');
-var client = require ('google-images');
+// var giSearch = require('google-image-search');
+// var client = require ('google-images');
 var fs = require('fs');
 var EspName = require('./espName.model');
 
@@ -19,9 +19,9 @@ exports.index = function(req, res) {
 // Get a single espName
 exports.gsearch = function(req, res) {
 
-  client.search('Michael Jackson'),function(err, images) {
-    image.writeTo('test.jpeg');
-  }
+  // client.search('Michael Jackson'),function(err, images) {
+  //   image.writeTo('test.jpeg');
+  // }
 
 
 return res.json("ok");
