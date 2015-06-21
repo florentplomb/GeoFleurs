@@ -50,7 +50,6 @@ exports.create = function(req, res) {
     return res.send(400);
   }
 
-  console.log(req.body.flower)
 
   var newFleur = new Fleur();
 
@@ -58,11 +57,6 @@ exports.create = function(req, res) {
   newFleur.properties.image = req.body.flower.properties.image;
   newFleur.properties.commune = req.body.flower.properties.commune;
   newFleur.properties.user = req.user.id;
-
-
-  console.log("USERS :" + req.user.id);
-
-
 
 
   if (req.body.flower.properties.espece === null) {

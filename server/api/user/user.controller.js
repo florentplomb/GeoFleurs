@@ -31,34 +31,39 @@ exports.login = function(req, res) {
 
   User.findOne({
     'email': req.body.email
-  },  function(err, user) {
+  }, function(err, user) {
     console.log(user);
 
     if (err) return res.send(500, err);
     if (!user) return res.status(422).json({
-          message: 'invalid user'
-        }).end();
+      message: 'invalid user'
+    }).end();
 
     var salt = new Buffer(user.salt, 'base64');
 
-   var hashedCli = crypto.pbkdf2Sync(req.body.password, salt, 10000, 64).toString('base64');
-   console.log(hashedCli);
-   console.log(user.hashedPassword);
+    var hashedCli = crypto.pbkdf2Sync(req.body.password, salt, 10000, 64).toString('base64');
+    console.log(hashedCli);
+    console.log(user.hashedPassword);
 
-      if (hashedCli == user.hashedPassword) {
-        var token = jwt.sign({
-      _id: user._id
-    }, config.secrets.session);
+    if (hashedCli == user.hashedPassword) {
+      var token = jwt.sign({
+        _id: user._id
+      }, config.secrets.session);
 
-        return res.json(token);
+    var userSaved = {};
+    userSaved.token = token;
+    userSaved.pseudo = user.pseudo;
+    userSaved.email = user.email
 
-      } else {
+      return res.json(userSaved);
 
-        return res.status(422).json({
-          message: 'Wrong Password'
-        }).end()
+    } else {
 
-      };
+      return res.status(422).json({
+        message: 'Wrong Password'
+      }).end()
+
+    };
 
   });
 
@@ -81,11 +86,13 @@ exports.create = function(req, res, next) {
     if (err) return validationError(res, err);
     var token = jwt.sign({
       _id: user._id
-    }, config.secrets.session);  // {expiresInSeconds : 5} ça marche pas!!!!
+    }, config.secrets.session); // {expiresInSeconds : 5}ça marche pas!!!!
     var userSaved = {};
-    userSaved = user;
+    userSaved.token = token;
+    userSaved.pseudo = user.pseudo;
+    userSaved.email = user.email
 
-    res.json(token);
+    res.json(userSaved);
   });
 };
 
