@@ -60,8 +60,6 @@ exports.create = function(req, res) {
 
 
   if (req.body.flower.properties.espece === null) {
-
-    console.log("nulll");
     newFleur.properties.complete = false;
 
     newFleur.save(function(err, fleurSaved) {
