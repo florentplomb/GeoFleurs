@@ -5,7 +5,7 @@
 module.exports = {
   // MongoDB connection options
   mongo: {
-    uri: 'mongodb://localhost/geofleurs-dev'
+    uri: 'mongodb://localhost/GeofleursBackup-05-09-15'
   },
 
   seedDB: true

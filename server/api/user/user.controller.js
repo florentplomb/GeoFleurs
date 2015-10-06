@@ -1,3 +1,18 @@
+// Copyright (C) 2015 Plomb Florent plombf@gmail.com
+
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+
+// You should have received a copy of the GNU General Public License along
+// with this program; if not, write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 'use strict';
 
 var User = require('./user.model');
@@ -30,7 +45,7 @@ exports.login = function(req, res) {
   if (!req.body.password) return res.send(400);
 
   User.findOne({
-    'email': req.body.email
+    'email': req.body.email.toLowerCase()
   }, function(err, user) {
     console.log(user);
 
@@ -42,18 +57,17 @@ exports.login = function(req, res) {
     var salt = new Buffer(user.salt, 'base64');
 
     var hashedCli = crypto.pbkdf2Sync(req.body.password, salt, 10000, 64).toString('base64');
-    console.log(hashedCli);
-    console.log(user.hashedPassword);
+
 
     if (hashedCli == user.hashedPassword) {
       var token = jwt.sign({
         _id: user._id
       }, config.secrets.session);
 
-    var userSaved = {};
-    userSaved.token = token;
-    userSaved.pseudo = user.pseudo;
-    userSaved.email = user.email
+      var userSaved = {};
+      userSaved.token = token;
+      userSaved.pseudo = user.pseudo;
+      userSaved.email = user.email
 
       return res.json(userSaved);
 
@@ -73,20 +87,31 @@ exports.login = function(req, res) {
  * Creates a new user
  */
 exports.create = function(req, res, next) {
-  console.log(req.body);
+
 
   if (!req.body.email) return res.send(400);
   if (!req.body.pseudo) return res.send(400);
   if (!req.body.password) return res.send(400);
+  console.log("A new register: " + req.body.email);
 
   var newUser = new User(req.body);
   newUser.provider = 'local';
   newUser.role = 'user';
   newUser.save(function(err, user) {
+
     if (err) return validationError(res, err);
     var token = jwt.sign({
       _id: user._id
     }, config.secrets.session); // {expiresInSeconds : 5}ça marche pas!!!!
+
+    // var token = jwt.sign(user, secret.secretToken, {
+    //   expiresInMinutes: 1
+    // });
+    // return res.json({
+    //   token: token
+    // });
+
+
     var userSaved = {};
     userSaved.token = token;
     userSaved.pseudo = user.pseudo;
