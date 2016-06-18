@@ -5,7 +5,7 @@
 module.exports = {
   // MongoDB connection options
   mongo: {
-    uri: 'mongodb://localhost/GeofleursBackup-05-09-15'
+    uri: 'mongodb://localhost/local-geofleurs' // grunt serve sa part la 
   },
 
   seedDB: true

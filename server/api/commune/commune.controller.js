@@ -58,7 +58,7 @@ var zone = req.body.zone;
 
 
 // Get list of communes
-exports.index = function(req, res) {
+exports.index = function(req, res,next) {
 
     Commune.find()
       .select("properties _id")

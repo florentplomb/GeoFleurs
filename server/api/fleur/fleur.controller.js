@@ -29,20 +29,6 @@ var fs = require('fs');
 
 
 // Get list of fleurs
-exports.ggimage = function(req, res) {
-
-  console.log("hey");
-
-
-giSearch('logo google').pipe(fs.createWriteStream('google.jpg'));
-
-return res.status(400).json({
-          message: 'google image'
-        }).end();
-
-};
-
-// Get list of fleurs
 exports.index = function(req, res) {
   Fleur.find()
     .populate('properties.espece properties.user properties.commune proprietes.commentaires')
@@ -50,6 +36,23 @@ exports.index = function(req, res) {
       path: 'properties.commune',
       select: 'properties.NAME -_id',
     })
+    .exec(function(err, fleurs) {
+      if (err) {
+        return handleError(res, err);
+      }
+      return res.json(200, fleurs);
+    });
+
+};
+
+exports.userFlowers = function(req, res) {
+  //Fleur.find({ user: '558bf5efea57700300be4cb7' })  // c'est le cheni !!
+    .populate('properties.espece properties.user properties.commune proprietes.commentaires')
+    .populate({
+      path: 'properties.commune',
+      select: 'properties.NAME -_id',
+    })
+
     .exec(function(err, fleurs) {
       if (err) {
         return handleError(res, err);

@@ -13,7 +13,11 @@ var UserSchema = new Schema({
   },
   hashedPassword: String,
   provider: String,
-  salt: String
+  salt: String,
+  fleurs: {
+      type: Schema.Types.ObjectId,
+      ref: 'Fleur'
+    }
 });
 
 /**
@@ -39,7 +43,9 @@ UserSchema
       'email': this.email,
       'pseudo' : this.pseudo,
       'role': this.role,
-      'salt' : this.salt
+      'salt' : this.salt,
+      'fleurs':this.fleurs
+
     };
   });
 
